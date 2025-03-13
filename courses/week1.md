@@ -264,6 +264,85 @@ console.log("Optional tuple:", optionalTuple);
 console.log("Named tuple:", namedPerson);
 ```
 
+---
+## TypeScript Modules and Organization
+
+### Understanding TypeScript's Module System
+
+When working with multiple TypeScript files, it's important to understand how TypeScript handles modules to prevent naming conflicts.
+
+By default, TypeScript treats all files as part of the same scope, which can lead to errors like:
+- Duplicate function names
+- Duplicate variable declarations
+- Unintended variable access between files
+
+To properly organize your code, you should make each file a module by using exports:
+
+```typescript
+// math.ts
+export function add(a: number, b: number): number {
+    return a + b;
+}
+
+export function subtract(a: number, b: number): number {
+    return a - b;
+}
+```
+
+Then import these functions where you need them:
+
+```typescript
+// calculator.ts
+import { add, subtract } from './math';
+
+console.log(add(5, 3));      // 8
+console.log(subtract(10, 4)); // 6
+```
+
+### Common Module Patterns
+
+1. **Named exports:**
+
+```typescript
+// utils.ts
+export function formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+}
+
+export function capitalize(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+```
+
+2. **Default exports:**
+
+```typescript
+// user.ts
+export default class User {
+    constructor(public name: string, public email: string) {}
+}
+
+// Usage:
+import User from './user';
+const user = new User('John', 'john@example.com');
+```
+
+3. **Mixed exports:**
+
+```typescript
+// api.ts
+export function fetchData() { /* ... */ }
+
+export default class API {
+    /* ... */
+}
+
+// Usage:
+import API, { fetchData } from './api';
+```
+
+---
+
 ## Day 4: Type Annotations and Type Inference
 
 ### Type Annotations
@@ -351,16 +430,212 @@ document.addEventListener("click", function(event) {
 console.log("Inferred types example");
 ```
 
-## Day 5: Practical Exercises
+---
+# TypeScript Week 1 - Comprehensive Exercises
 
-Let's apply what you've learned with some practical exercises:
+These exercises are designed to help you apply all the concepts you've learned in Week 1 of your TypeScript course. Each exercise integrates multiple TypeScript fundamentals into a practical problem.
 
-### Exercise 1: Temperature Converter
+## Exercise 1: Calculator Application
 
-Create a program that converts between Celsius and Fahrenheit.
+**Problem Description:**
+Build a calculator application that can perform basic arithmetic operations and handle different input types.
+
+**Requirements:**
+1. Create functions for the four basic operations (addition, subtraction, multiplication, division)
+2. Include proper error handling (e.g., division by zero)
+3. Support both integer and decimal calculations
+4. Use TypeScript's type system to ensure type safety
+5. Create a clean interface for performing and displaying calculations
+
+**Hints:**
+- Define a type for the supported operations
+- Include proper validation for inputs
+- Think about how to structure your code to make it modular and reusable
+
+## Exercise 2: Temperature Unit Converter
+
+**Problem Description:**
+Create a comprehensive temperature conversion utility that can convert between different temperature units (Celsius, Fahrenheit, and Kelvin).
+
+**Requirements:**
+
+1. Create a TypeScript program that provides functions for converting between all three temperature units
+2. Include validation to prevent invalid inputs (e.g., temperatures below absolute zero)
+3. Implement a function that takes a temperature value, source unit, and target unit, then returns the converted value
+4. Add proper type annotations for all parameters and return values
+5. Create a demonstration that shows conversions between all units with formatted output
+
+**Hints:**
+- Absolute zero is -273.15°C, -459.67°F, or 0K
+- The conversion formulas are:
+  - °C to °F: (°C × 9/5) + 32
+  - °F to °C: (°F - 32) × 5/9
+  - °C to K: °C + 273.15
+  - K to °C: K - 273.15
+  - °F to K: (°F - 32) × 5/9 + 273.15
+  - K to °F: (K - 273.15) × 9/5 + 32
+
+## Exercise 3: Grade Analysis System
+
+**Problem Description:**
+Develop a grade analysis system for a classroom that can track student grades, calculate statistics, and generate reports.
+
+**Requirements:**
+1. Define appropriate types to represent students, assignments, and grades
+2. Implement a class to manage the gradebook with methods to:
+   - Add students to the class
+   - Record assignment grades for students
+   - Calculate average grades for students and for the class
+   - Determine the highest and lowest performers
+   - Generate letter grades based on numerical scores
+3. Include proper validation for inputs (e.g., grades between 0-100)
+4. Create a demonstration that showcases all the functionality with sample data
+
+**Hints:**
+- Consider using arrays and objects to store student and grade information
+- Think about how to handle missing assignments or students with no grades
+- Use TypeScript's type system to ensure data consistency
+
+## Exercise 4: Banking System Simulator
+
+**Problem Description:**
+Create a simple banking system that allows users to manage multiple accounts, perform transactions, and view account summaries.
+
+**Requirements:**
+1. Define types for different account types (e.g., checking, savings)
+2. Implement a `BankAccount` class with methods to:
+   - Deposit funds
+   - Withdraw funds (with validation)
+   - Check balance
+   - Get transaction history
+3. Implement a `Bank` class to:
+   - Create new accounts
+   - Find accounts by ID or owner name
+   - Generate account summaries
+   - Calculate total funds across all accounts
+4. Ensure proper validation (e.g., prevent negative balances, invalid transaction amounts)
+5. Include appropriate error handling
+6. Create a demonstration with sample accounts and transactions
+
+**Hints:**
+- Use access modifiers (public/private) to control access to account details
+- Consider using tuples or custom types to represent transactions
+- Think about how to store and format the transaction history
+
+---
+
+## Solutions
+
+### Exercise 1 Solution: Calculator Application
+
+```typescript
+// src/calculator.ts
+
+// Define a type for the supported operations
+type Operation = "add" | "subtract" | "multiply" | "divide";
+
+// Function to add two numbers
+function add(a: number, b: number): number {
+    return a + b;
+}
+
+// Function to subtract two numbers
+function subtract(a: number, b: number): number {
+    return a - b;
+}
+
+// Function to multiply two numbers
+function multiply(a: number, b: number): number {
+    return a * b;
+}
+
+// Function to divide two numbers
+function divide(a: number, b: number): number {
+    if (b === 0) {
+        throw new Error("Division by zero is not allowed");
+    }
+    return a / b;
+}
+
+// Main calculator function that performs the specified operation
+function calculate(a: number, b: number, operation: Operation): number {
+    switch (operation) {
+        case "add":
+            return add(a, b);
+        case "subtract":
+            return subtract(a, b);
+        case "multiply":
+            return multiply(a, b);
+        case "divide":
+            return divide(a, b);
+        default:
+            // This should never happen with TypeScript's type checking
+            throw new Error(`Unsupported operation: ${operation}`);
+    }
+}
+
+// Function to format and display a calculation
+function displayCalculation(a: number, b: number, operation: Operation): void {
+    try {
+        const result = calculate(a, b, operation);
+        
+        // Determine the operator symbol for display
+        let operatorSymbol = "";
+        switch (operation) {
+            case "add": operatorSymbol = "+"; break;
+            case "subtract": operatorSymbol = "-"; break;
+            case "multiply": operatorSymbol = "×"; break;
+            case "divide": operatorSymbol = "÷"; break;
+        }
+        
+        console.log(`${a} ${operatorSymbol} ${b} = ${result}`);
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error(`Error: ${error.message}`);
+        } else {
+            console.error("An unknown error occurred");
+        }
+    }
+}
+
+// Demo function to test the calculator
+function runCalculatorDemo(): void {
+    console.log("===== Calculator Demo =====");
+    
+    // Test with integer values
+    displayCalculation(5, 3, "add");
+    displayCalculation(10, 4, "subtract");
+    displayCalculation(6, 7, "multiply");
+    displayCalculation(15, 3, "divide");
+    
+    // Test with decimal values
+    displayCalculation(10.5, 2.5, "add");
+    displayCalculation(7.75, 3.25, "subtract");
+    displayCalculation(2.5, 2.5, "multiply");
+    displayCalculation(10.8, 3, "divide");
+    
+    // Test error handling
+    displayCalculation(10, 0, "divide"); // This should show an error
+}
+
+// Run the calculator demo
+runCalculatorDemo();
+```
+
+### Exercise 2 Solution: Temperature Unit Converter
 
 ```typescript
 // src/temperature-converter.ts
+
+// Define a type for temperature units
+type TemperatureUnit = "Celsius" | "Fahrenheit" | "Kelvin";
+
+// Define the absolute zero values for each unit
+const ABSOLUTE_ZERO = {
+    Celsius: -273.15,
+    Fahrenheit: -459.67,
+    Kelvin: 0
+};
 
 // Function to convert Celsius to Fahrenheit
 function celsiusToFahrenheit(celsius: number): number {
@@ -372,466 +647,843 @@ function fahrenheitToCelsius(fahrenheit: number): number {
     return (fahrenheit - 32) * 5/9;
 }
 
-// Test the functions
-const celsiusTemperature: number = 25;
-const fahrenheitTemperature: number = 77;
-
-console.log(`${celsiusTemperature}°C is ${celsiusToFahrenheit(celsiusTemperature).toFixed(2)}°F`);
-console.log(`${fahrenheitTemperature}°F is ${fahrenheitToCelsius(fahrenheitTemperature).toFixed(2)}°C`);
-```
-
-### Exercise 2: Student Grade Tracker
-
-Create a program to track and calculate student grades.
-
-```typescript
-// src/grade-tracker.ts
-
-// Define the structure of a student record
-type Student = {
-    name: string;
-    id: string;
-    grades: number[];
-};
-
-// Create some example students
-const students: Student[] = [
-    { name: "Alice", id: "A001", grades: [85, 90, 92, 88] },
-    { name: "Bob", id: "B002", grades: [75, 80, 85, 78] },
-    { name: "Charlie", id: "C003", grades: [95, 92, 96, 90] }
-];
-
-// Function to calculate the average grade for a student
-function calculateAverage(grades: number[]): number {
-    const sum = grades.reduce((total, grade) => total + grade, 0);
-    return sum / grades.length;
+// Function to convert Celsius to Kelvin
+function celsiusToKelvin(celsius: number): number {
+    return celsius + 273.15;
 }
 
-// Function to get the letter grade based on numerical grade
-function getLetterGrade(average: number): string {
-    if (average >= 90) return "A";
-    if (average >= 80) return "B";
-    if (average >= 70) return "C";
-    if (average >= 60) return "D";
-    return "F";
+// Function to convert Kelvin to Celsius
+function kelvinToCelsius(kelvin: number): number {
+    return kelvin - 273.15;
 }
 
-// Display student information with grades
-function displayStudentInfo(student: Student): void {
-    const average = calculateAverage(student.grades);
-    const letterGrade = getLetterGrade(average);
-    
-    console.log(`Student: ${student.name} (ID: ${student.id})`);
-    console.log(`Grades: ${student.grades.join(", ")}`);
-    console.log(`Average: ${average.toFixed(2)}`);
-    console.log(`Letter Grade: ${letterGrade}`);
-    console.log("------------------------");
+// Function to convert Fahrenheit to Kelvin
+function fahrenheitToKelvin(fahrenheit: number): number {
+    const celsius = fahrenheitToCelsius(fahrenheit);
+    return celsiusToKelvin(celsius);
 }
 
-// Process all students
-students.forEach(displayStudentInfo);
-```
-
-## Day 6-7: Mini-Project - To-Do List Application
-
-Let's build a simple command-line To-Do list application to practice what you've learned.
-
-```typescript
-// src/todo-app.ts
-
-// Define the structure of a task
-type Task = {
-    id: number;
-    title: string;
-    completed: boolean;
-    createdAt: Date;
-};
-
-// Define the structure of our to-do list
-class TodoList {
-    private tasks: Task[] = [];
-    private nextId: number = 1;
-
-    // Add a new task
-    addTask(title: string): void {
-        const newTask: Task = {
-            id: this.nextId++,
-            title,
-            completed: false,
-            createdAt: new Date()
-        };
-        this.tasks.push(newTask);
-        console.log(`Task added: "${title}"`);
-    }
-
-    // Mark a task as completed
-    completeTask(id: number): void {
-        const task = this.findTask(id);
-        if (task) {
-            task.completed = true;
-            console.log(`Task marked as completed: "${task.title}"`);
-        } else {
-            console.log(`Task with ID ${id} not found.`);
-        }
-    }
-
-    // Remove a task
-    removeTask(id: number): void {
-        const initialLength = this.tasks.length;
-        this.tasks = this.tasks.filter(task => task.id !== id);
-        
-        if (initialLength !== this.tasks.length) {
-            console.log(`Task with ID ${id} removed.`);
-        } else {
-            console.log(`Task with ID ${id} not found.`);
-        }
-    }
-
-    // List all tasks
-    listAllTasks(): void {
-        if (this.tasks.length === 0) {
-            console.log("No tasks found.");
-            return;
-        }
-
-        console.log("Tasks:");
-        this.tasks.forEach(task => {
-            const status = task.completed ? "✓" : "☐";
-            const date = task.createdAt.toLocaleDateString();
-            console.log(`[${status}] ${task.id}. ${task.title} (Created: ${date})`);
-        });
-    }
-
-    // List only completed tasks
-    listCompletedTasks(): void {
-        const completedTasks = this.tasks.filter(task => task.completed);
-        
-        if (completedTasks.length === 0) {
-            console.log("No completed tasks found.");
-            return;
-        }
-
-        console.log("Completed Tasks:");
-        completedTasks.forEach(task => {
-            const date = task.createdAt.toLocaleDateString();
-            console.log(`✓ ${task.id}. ${task.title} (Created: ${date})`);
-        });
-    }
-
-    // Helper method to find a task by ID
-    private findTask(id: number): Task | undefined {
-        return this.tasks.find(task => task.id === id);
-    }
+// Function to convert Kelvin to Fahrenheit
+function kelvinToFahrenheit(kelvin: number): number {
+    const celsius = kelvinToCelsius(kelvin);
+    return celsiusToFahrenheit(celsius);
 }
 
-// Example usage
-function runTodoApp(): void {
-    console.log("To-Do List Application");
-    console.log("----------------------");
-
-    const todoList = new TodoList();
-
-    // Add some tasks
-    todoList.addTask("Learn TypeScript basics");
-    todoList.addTask("Complete TypeScript exercises");
-    todoList.addTask("Build a mini-project");
-    todoList.addTask("Review week 1 content");
-
-    console.log("\nInitial task list:");
-    todoList.listAllTasks();
-
-    // Complete some tasks
-    todoList.completeTask(1);
-    todoList.completeTask(3);
-
-    console.log("\nAfter completing tasks:");
-    todoList.listAllTasks();
-
-    console.log("\nOnly completed tasks:");
-    todoList.listCompletedTasks();
-
-    // Remove a task
-    todoList.removeTask(2);
-
-    console.log("\nAfter removing a task:");
-    todoList.listAllTasks();
-
-    // Try to complete a non-existent task
-    todoList.completeTask(10);
-
-    // Try to remove a non-existent task
-    todoList.removeTask(10);
+// Function to validate that a temperature is not below absolute zero
+function isValidTemperature(value: number, unit: TemperatureUnit): boolean {
+    return value >= ABSOLUTE_ZERO[unit];
 }
 
-// Run the application
-runTodoApp();
-```
-
-## Weekly Challenge: Personal Information Manager
-
-Now, let's create a more complex project that combines everything you've learned:
-
-```typescript
-// src/contact-manager.ts
-
-// Define types for our contact manager
-type ContactType = "personal" | "work" | "family" | "other";
-
-type Address = {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    country?: string; // Optional field
-};
-
-type Contact = {
-    id: number;
-    name: string;
-    email: string;
-    phone?: string; // Optional field
-    type: ContactType;
-    address?: Address; // Optional field
-    notes?: string; // Optional field
-    addedAt: Date;
-};
-
-class ContactManager {
-    private contacts: Contact[] = [];
-    private nextId: number = 1;
-
-    // Add a new contact
-    addContact(
-        name: string,
-        email: string,
-        type: ContactType,
-        phone?: string,
-        address?: Address,
-        notes?: string
-    ): void {
-        const newContact: Contact = {
-            id: this.nextId++,
-            name,
-            email,
-            phone,
-            type,
-            address,
-            notes,
-            addedAt: new Date()
-        };
-        
-        this.contacts.push(newContact);
-        console.log(`Contact added: ${name}`);
-    }
-
-    // Update an existing contact
-    updateContact(id: number, updatedFields: Partial<Contact>): void {
-        const contact = this.findContact(id);
-        
-        if (contact) {
-            // Remove non-updateable fields
-            delete updatedFields.id;
-            delete updatedFields.addedAt;
-            
-            // Update the contact
-            Object.assign(contact, updatedFields);
-            console.log(`Contact ${id} updated successfully.`);
-        } else {
-            console.log(`Contact with ID ${id} not found.`);
-        }
-    }
-
-    // Remove a contact
-    removeContact(id: number): void {
-        const initialLength = this.contacts.length;
-        this.contacts = this.contacts.filter(contact => contact.id !== id);
-        
-        if (initialLength !== this.contacts.length) {
-            console.log(`Contact with ID ${id} removed.`);
-        } else {
-            console.log(`Contact with ID ${id} not found.`);
-        }
-    }
-
-    // Search contacts by name (partial match)
-    searchByName(searchTerm: string): Contact[] {
-        const results = this.contacts.filter(contact => 
-            contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+// Main conversion function that handles all unit combinations
+function convertTemperature(
+    value: number, 
+    fromUnit: TemperatureUnit, 
+    toUnit: TemperatureUnit
+): number {
+    // Validate the input temperature
+    if (!isValidTemperature(value, fromUnit)) {
+        throw new Error(
+            `Invalid temperature: ${value} ${fromUnit} is below absolute zero ` +
+            `(${ABSOLUTE_ZERO[fromUnit]} ${fromUnit})`
         );
+    }
+
+    // If the units are the same, no conversion needed
+    if (fromUnit === toUnit) {
+        return value;
+    }
+
+    // Convert based on the unit combination
+    switch (fromUnit) {
+        case "Celsius":
+            return toUnit === "Fahrenheit" 
+                ? celsiusToFahrenheit(value) 
+                : celsiusToKelvin(value);
         
-        return results;
+        case "Fahrenheit":
+            return toUnit === "Celsius" 
+                ? fahrenheitToCelsius(value) 
+                : fahrenheitToKelvin(value);
+        
+        case "Kelvin":
+            return toUnit === "Celsius" 
+                ? kelvinToCelsius(value) 
+                : kelvinToFahrenheit(value);
+        
+        default:
+            throw new Error(`Unsupported unit: ${fromUnit}`);
     }
+}
 
-    // Filter contacts by type
-    filterByType(type: ContactType): Contact[] {
-        return this.contacts.filter(contact => contact.type === type);
+// Function to format a temperature for display
+function formatTemperature(value: number, unit: TemperatureUnit): string {
+    const rounded = Math.round(value * 100) / 100; // Round to 2 decimal places
+    
+    let symbol = "";
+    switch (unit) {
+        case "Celsius": symbol = "°C"; break;
+        case "Fahrenheit": symbol = "°F"; break;
+        case "Kelvin": symbol = "K"; break;
     }
+    
+    return `${rounded}${symbol}`;
+}
 
-    // Display all contacts
-    listAllContacts(): void {
-        if (this.contacts.length === 0) {
-            console.log("No contacts found.");
-            return;
+// Function to display a temperature conversion
+function displayConversion(
+    value: number, 
+    fromUnit: TemperatureUnit, 
+    toUnit: TemperatureUnit
+): void {
+    try {
+        const convertedValue = convertTemperature(value, fromUnit, toUnit);
+        console.log(
+            `${formatTemperature(value, fromUnit)} = ` +
+            `${formatTemperature(convertedValue, toUnit)}`
+        );
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error(`Error: ${error.message}`);
+        } else {
+            console.error("An unknown error occurred");
         }
-
-        console.log("All Contacts:");
-        this.contacts.forEach(this.displayContact);
     }
+}
 
-    // Display contacts of a specific type
-    listContactsByType(type: ContactType): void {
-        const filteredContacts = this.filterByType(type);
+// Demo function to test the temperature converter
+function runTemperatureConverterDemo(): void {
+    console.log("===== Temperature Converter Demo =====");
+    
+    // Test all conversion combinations
+    const testValues = [
+        { value: 0, unit: "Celsius" },
+        { value: 32, unit: "Fahrenheit" },
+        { value: 273.15, unit: "Kelvin" },
+        { value: 100, unit: "Celsius" },
+        { value: 98.6, unit: "Fahrenheit" },
+        { value: 310, unit: "Kelvin" },
+    ];
+    
+    const units: TemperatureUnit[] = ["Celsius", "Fahrenheit", "Kelvin"];
+    
+    // Convert each test value to all other units
+    testValues.forEach(test => {
+        const fromUnit = test.unit as TemperatureUnit;
+        console.log(`\nConverting from ${formatTemperature(test.value, fromUnit)}:`);
         
-        if (filteredContacts.length === 0) {
-            console.log(`No ${type} contacts found.`);
-            return;
-        }
-
-        console.log(`${type.charAt(0).toUpperCase() + type.slice(1)} Contacts:`);
-        filteredContacts.forEach(this.displayContact);
-    }
-
-    // Display search results
-    displaySearchResults(searchTerm: string): void {
-        const results = this.searchByName(searchTerm);
-        
-        if (results.length === 0) {
-            console.log(`No contacts found matching "${searchTerm}".`);
-            return;
-        }
-
-        console.log(`Search results for "${searchTerm}":`);
-        results.forEach(this.displayContact);
-    }
-
-    // Helper method to find a contact by ID
-    private findContact(id: number): Contact | undefined {
-        return this.contacts.find(contact => contact.id === id);
-    }
-
-    // Helper method to display a contact
-    private displayContact = (contact: Contact): void => {
-        console.log(`ID: ${contact.id}`);
-        console.log(`Name: ${contact.name}`);
-        console.log(`Email: ${contact.email}`);
-        console.log(`Type: ${contact.type}`);
-        
-        if (contact.phone) {
-            console.log(`Phone: ${contact.phone}`);
-        }
-        
-        if (contact.address) {
-            console.log(`Address: ${contact.address.street}, ${contact.address.city}, ${contact.address.state} ${contact.address.zipCode}`);
-            if (contact.address.country) {
-                console.log(`Country: ${contact.address.country}`);
+        units.forEach(toUnit => {
+            if (fromUnit !== toUnit) {
+                displayConversion(test.value, fromUnit, toUnit);
             }
+        });
+    });
+    
+    // Test validation of temperatures below absolute zero
+    console.log("\nTesting validation:");
+    displayConversion(-300, "Celsius", "Fahrenheit"); // Below absolute zero
+    displayConversion(-500, "Fahrenheit", "Kelvin"); // Below absolute zero
+    displayConversion(-10, "Kelvin", "Celsius"); // Below absolute zero
+}
+
+// Run the temperature converter demo
+runTemperatureConverterDemo();
+```
+
+### Exercise 3 Solution: Grade Analysis System
+
+```typescript
+// src/grade-analysis.ts
+
+// Define types for the grade system
+type Student = {
+    id: string;
+    name: string;
+};
+
+type Assignment = {
+    id: string;
+    name: string;
+    maxScore: number;
+};
+
+type Grade = {
+    studentId: string;
+    assignmentId: string;
+    score: number;
+};
+
+type StudentSummary = {
+    student: Student;
+    averageGrade: number;
+    letterGrade: string;
+    assignments: {
+        assignment: Assignment;
+        score: number;
+        percentage: number;
+    }[];
+};
+
+// Class to manage the gradebook
+class Gradebook {
+    private students: Student[] = [];
+    private assignments: Assignment[] = [];
+    private grades: Grade[] = [];
+
+    // Add a student to the class
+    addStudent(id: string, name: string): void {
+        // Check if student ID already exists
+        if (this.findStudentById(id)) {
+            console.error(`Error: Student with ID ${id} already exists`);
+            return;
+        }
+
+        this.students.push({ id, name });
+        console.log(`Student added: ${name} (ID: ${id})`);
+    }
+
+    // Add an assignment to the class
+    addAssignment(id: string, name: string, maxScore: number): void {
+        // Validate maxScore
+        if (maxScore <= 0) {
+            console.error("Error: Maximum score must be positive");
+            return;
+        }
+
+        // Check if assignment ID already exists
+        if (this.findAssignmentById(id)) {
+            console.error(`Error: Assignment with ID ${id} already exists`);
+            return;
+        }
+
+        this.assignments.push({ id, name, maxScore });
+        console.log(`Assignment added: ${name} (ID: ${id}, Max Score: ${maxScore})`);
+    }
+
+    // Record a grade for a student's assignment
+    recordGrade(studentId: string, assignmentId: string, score: number): void {
+        // Validate that student exists
+        const student = this.findStudentById(studentId);
+        if (!student) {
+            console.error(`Error: Student with ID ${studentId} not found`);
+            return;
+        }
+
+        // Validate that assignment exists
+        const assignment = this.findAssignmentById(assignmentId);
+        if (!assignment) {
+            console.error(`Error: Assignment with ID ${assignmentId} not found`);
+            return;
+        }
+
+        // Validate score
+        if (score < 0 || score > assignment.maxScore) {
+            console.error(`Error: Score must be between 0 and ${assignment.maxScore}`);
+            return;
+        }
+
+        // Check if a grade already exists for this student and assignment
+        const existingGradeIndex = this.grades.findIndex(
+            g => g.studentId === studentId && g.assignmentId === assignmentId
+        );
+
+        if (existingGradeIndex >= 0) {
+            // Update existing grade
+            this.grades[existingGradeIndex].score = score;
+            console.log(`Updated grade for ${student.name} on "${assignment.name}": ${score}/${assignment.maxScore}`);
+        } else {
+            // Add new grade
+            this.grades.push({ studentId, assignmentId, score });
+            console.log(`Recorded grade for ${student.name} on "${assignment.name}": ${score}/${assignment.maxScore}`);
+        }
+    }
+
+    // Calculate the average grade for a student (as a percentage)
+    calculateStudentAverage(studentId: string): number {
+        const student = this.findStudentById(studentId);
+        if (!student) {
+            console.error(`Error: Student with ID ${studentId} not found`);
+            return 0;
+        }
+
+        const studentGrades = this.grades.filter(grade => grade.studentId === studentId);
+        if (studentGrades.length === 0) {
+            return 0; // No grades yet
+        }
+
+        let totalPercentage = 0;
+        studentGrades.forEach(grade => {
+            const assignment = this.findAssignmentById(grade.assignmentId);
+            if (assignment) {
+                totalPercentage += (grade.score / assignment.maxScore) * 100;
+            }
+        });
+
+        return totalPercentage / studentGrades.length;
+    }
+
+    // Calculate the class average (as a percentage)
+    calculateClassAverage(): number {
+        if (this.students.length === 0 || this.grades.length === 0) {
+            return 0; // No students or no grades yet
+        }
+
+        let totalAverage = 0;
+        let studentsWithGrades = 0;
+
+        this.students.forEach(student => {
+            const average = this.calculateStudentAverage(student.id);
+            if (average > 0) {
+                totalAverage += average;
+                studentsWithGrades++;
+            }
+        });
+
+        return studentsWithGrades > 0 ? totalAverage / studentsWithGrades : 0;
+    }
+
+    // Convert a numerical grade to a letter grade
+    getLetterGrade(percentage: number): string {
+        if (percentage >= 90) return "A";
+        if (percentage >= 80) return "B";
+        if (percentage >= 70) return "C";
+        if (percentage >= 60) return "D";
+        return "F";
+    }
+
+    // Find the highest performing student
+    findHighestPerformer(): Student | null {
+        if (this.students.length === 0) {
+            return null;
+        }
+
+        let highestAverage = -1;
+        let highestPerformer: Student | null = null;
+
+        this.students.forEach(student => {
+            const average = this.calculateStudentAverage(student.id);
+            if (average > highestAverage) {
+                highestAverage = average;
+                highestPerformer = student;
+            }
+        });
+
+        return highestPerformer;
+    }
+
+    // Find the lowest performing student (among those with grades)
+    findLowestPerformer(): Student | null {
+        if (this.students.length === 0) {
+            return null;
+        }
+
+        let lowestAverage = 101; // Higher than possible percentage
+        let lowestPerformer: Student | null = null;
+
+        this.students.forEach(student => {
+            const average = this.calculateStudentAverage(student.id);
+            if (average > 0 && average < lowestAverage) {
+                lowestAverage = average;
+                lowestPerformer = student;
+            }
+        });
+
+        return lowestPerformer;
+    }
+
+    // Generate a summary for a student
+    generateStudentSummary(studentId: string): StudentSummary | null {
+        const student = this.findStudentById(studentId);
+        if (!student) {
+            console.error(`Error: Student with ID ${studentId} not found`);
+            return null;
+        }
+
+        const average = this.calculateStudentAverage(studentId);
+        const letterGrade = this.getLetterGrade(average);
+        
+        const assignmentResults = this.assignments.map(assignment => {
+            const grade = this.findGrade(studentId, assignment.id);
+            const score = grade ? grade.score : 0;
+            const percentage = grade ? (score / assignment.maxScore) * 100 : 0;
+            
+            return {
+                assignment,
+                score,
+                percentage
+            };
+        });
+
+        return {
+            student,
+            averageGrade: average,
+            letterGrade,
+            assignments: assignmentResults
+        };
+    }
+
+    // Generate a class report
+    generateClassReport(): void {
+        if (this.students.length === 0) {
+            console.log("No students in the class");
+            return;
+        }
+
+        const classAverage = this.calculateClassAverage();
+        const classLetterGrade = this.getLetterGrade(classAverage);
+        
+        console.log("===== Class Report =====");
+        console.log(`Total Students: ${this.students.length}`);
+        console.log(`Total Assignments: ${this.assignments.length}`);
+        console.log(`Class Average: ${classAverage.toFixed(2)}% (${classLetterGrade})`);
+        
+        // Find and display highest and lowest performers
+        const highestPerformer = this.findHighestPerformer();
+        const lowestPerformer = this.findLowestPerformer();
+        
+        if (highestPerformer) {
+            const highestAverage = this.calculateStudentAverage(highestPerformer.id);
+            console.log(`Highest Performer: ${highestPerformer.name} (${highestAverage.toFixed(2)}%)`);
         }
         
-        if (contact.notes) {
-            console.log(`Notes: ${contact.notes}`);
+        if (lowestPerformer) {
+            const lowestAverage = this.calculateStudentAverage(lowestPerformer.id);
+            console.log(`Lowest Performer: ${lowestPerformer.name} (${lowestAverage.toFixed(2)}%)`);
         }
         
-        console.log(`Added: ${contact.addedAt.toLocaleDateString()}`);
-        console.log("---------------------------");
+        // Display student summaries
+        console.log("\n===== Student Summaries =====");
+        this.students.forEach(student => {
+            const average = this.calculateStudentAverage(student.id);
+            const letterGrade = this.getLetterGrade(average);
+            console.log(`${student.name}: ${average.toFixed(2)}% (${letterGrade})`);
+        });
+    }
+
+    // Display detailed information for a student
+    displayStudentDetails(studentId: string): void {
+        const summary = this.generateStudentSummary(studentId);
+        if (!summary) {
+            return;
+        }
+
+        console.log(`\n===== Student Details: ${summary.student.name} =====`);
+        console.log(`ID: ${summary.student.id}`);
+        console.log(`Average Grade: ${summary.averageGrade.toFixed(2)}% (${summary.letterGrade})`);
+        
+        console.log("\nAssignments:");
+        summary.assignments.forEach(item => {
+            const status = item.score > 0 ? `${item.score}/${item.assignment.maxScore} (${item.percentage.toFixed(1)}%)` : "Not submitted";
+            console.log(`- ${item.assignment.name}: ${status}`);
+        });
+    }
+
+    // Helper method to find a student by ID
+    private findStudentById(id: string): Student | undefined {
+        return this.students.find(student => student.id === id);
+    }
+
+    // Helper method to find an assignment by ID
+    private findAssignmentById(id: string): Assignment | undefined {
+        return this.assignments.find(assignment => assignment.id === id);
+    }
+
+    // Helper method to find a grade for a student and assignment
+    private findGrade(studentId: string, assignmentId: string): Grade | undefined {
+        return this.grades.find(
+            grade => grade.studentId === studentId && grade.assignmentId === assignmentId
+        );
     }
 }
 
-// Example usage
-function runContactManager(): void {
-    console.log("Contact Manager Application");
-    console.log("--------------------------");
-
-    const contactManager = new ContactManager();
-
-    // Add various contacts
-    contactManager.addContact(
-        "John Doe",
-        "john.doe@example.com",
-        "personal",
-        "555-123-4567",
-        {
-            street: "123 Main St",
-            city: "Anytown",
-            state: "CA",
-            zipCode: "12345",
-            country: "USA"
-        },
-        "My best friend from college"
-    );
-
-    contactManager.addContact(
-        "Jane Smith",
-        "jane.smith@company.com",
-        "work",
-        "555-987-6543",
-        {
-            street: "456 Business Ave",
-            city: "Workville",
-            state: "NY",
-            zipCode: "54321"
-        }
-    );
-
-    contactManager.addContact(
-        "Alice Johnson",
-        "alice@familydomain.com",
-        "family",
-        "555-246-8101",
-        {
-            street: "789 Family Rd",
-            city: "Hometown",
-            state: "TX",
-            zipCode: "67890",
-            country: "USA"
-        },
-        "Sister"
-    );
-
-    contactManager.addContact(
-        "Bob Brown",
-        "bob@example.com",
-        "personal"
-    );
-
-    contactManager.addContact(
-        "Carol White",
-        "carol@company.com",
-        "work"
-    );
-
-    // List all contacts
-    console.log("\nListing all contacts:");
-    contactManager.listAllContacts();
-
-    // Search for contacts
-    console.log("\nSearching for 'jo':");
-    contactManager.displaySearchResults("jo");
-
-    // Filter by type
-    console.log("\nFiltering work contacts:");
-    contactManager.listContactsByType("work");
-
-    // Update a contact
-    contactManager.updateContact(2, {
-        phone: "555-111-2222",
-        notes: "Recently promoted to manager"
-    });
-
-    // Check the updated contact
-    console.log("\nAfter updating contact 2:");
-    contactManager.displaySearchResults("Jane");
-
-    // Remove a contact
-    contactManager.removeContact(5);
-
-    // List all contacts after removal
-    console.log("\nAfter removing a contact:");
-    contactManager.listAllContacts();
+// Demo function to test the grade analysis system
+function runGradeAnalysisDemo(): void {
+    console.log("===== Grade Analysis System Demo =====");
+    
+    const gradebook = new Gradebook();
+    
+    // Add students
+    gradebook.addStudent("S001", "Alice Smith");
+    gradebook.addStudent("S002", "Bob Jones");
+    gradebook.addStudent("S003", "Charlie Brown");
+    gradebook.addStudent("S004", "Diana Miller");
+    
+    // Try to add a duplicate student
+    gradebook.addStudent("S001", "Duplicate Student");
+    
+    // Add assignments
+    gradebook.addAssignment("A001", "Homework 1", 100);
+    gradebook.addAssignment("A002", "Quiz 1", 50);
+    gradebook.addAssignment("A003", "Midterm Exam", 200);
+    
+    // Try to add an invalid assignment
+    gradebook.addAssignment("A004", "Invalid Assignment", -10);
+    
+    // Record grades
+    gradebook.recordGrade("S001", "A001", 95);
+    gradebook.recordGrade("S001", "A002", 48);
+    gradebook.recordGrade("S001", "A003", 185);
+    
+    gradebook.recordGrade("S002", "A001", 88);
+    gradebook.recordGrade("S002", "A002", 42);
+    gradebook.recordGrade("S002", "A003", 160);
+    
+    gradebook.recordGrade("S003", "A001", 75);
+    gradebook.recordGrade("S003", "A002", 30);
+    gradebook.recordGrade("S003", "A003", 140);
+    
+    // Only record some assignments for Diana
+    gradebook.recordGrade("S004", "A001", 92);
+    gradebook.recordGrade("S004", "A002", 45);
+    
+    // Try to record an invalid grade
+    gradebook.recordGrade("S004", "A003", 250); // Exceeds max score
+    gradebook.recordGrade("S005", "A001", 90);  // Student doesn't exist
+    gradebook.recordGrade("S004", "A005", 90);  // Assignment doesn't exist
+    
+    // Update an existing grade
+    gradebook.recordGrade("S003", "A001", 78); // Update Charlie's homework grade
+    
+    // Generate class report
+    gradebook.generateClassReport();
+    
+    // Display details for each student
+    gradebook.displayStudentDetails("S001");
+    gradebook.displayStudentDetails("S002");
+    gradebook.displayStudentDetails("S003");
+    gradebook.displayStudentDetails("S004");
 }
 
-// Run the application
-runContactManager();
+// Run the grade analysis demo
+runGradeAnalysisDemo();
 ```
+
+### Exercise 4 Solution: Banking System Simulator
+
+```typescript
+// src/banking-system.ts
+
+// Define account types
+type AccountType = "Checking" | "Savings";
+
+// Define transaction types
+type TransactionType = "Deposit" | "Withdrawal" | "Transfer";
+
+// Define a transaction
+type Transaction = {
+    id: string;
+    type: TransactionType;
+    amount: number;
+    date: Date;
+    description: string;
+};
+
+// Define the bank account class
+class BankAccount {
+    private transactions: Transaction[] = [];
+    private nextTransactionId: number = 1;
+
+    constructor(
+        private accountId: string,
+        private ownerName: string,
+        private accountType: AccountType,
+        private balance: number = 0
+    ) {}
+
+    // Getter methods
+    getAccountId(): string {
+        return this.accountId;
+    }
+
+    getOwnerName(): string {
+        return this.ownerName;
+    }
+
+    getAccountType(): AccountType {
+        return this.accountType;
+    }
+
+    getBalance(): number {
+        return this.balance;
+    }
+
+    // Deposit money into the account
+    deposit(amount: number, description: string = "Deposit"): boolean {
+        if (amount <= 0) {
+            console.error("Error: Deposit amount must be positive");
+            return false;
+        }
+
+        this.balance += amount;
+        
+        const transaction: Transaction = {
+            id: this.generateTransactionId(),
+            type: "Deposit",
+            amount,
+            date: new Date(),
+            description
+        };
+        
+        this.transactions.push(transaction);
+        return true;
+    }
+
+    // Withdraw money from the account
+    withdraw(amount: number, description: string = "Withdrawal"): boolean {
+        if (amount <= 0) {
+            console.error("Error: Withdrawal amount must be positive");
+            return false;
+        }
+
+        if (amount > this.balance) {
+            console.error("Error: Insufficient funds");
+            return false;
+        }
+
+        this.balance -= amount;
+        
+        const transaction: Transaction = {
+            id: this.generateTransactionId(),
+            type: "Withdrawal",
+            amount,
+            date: new Date(),
+            description
+        };
+        
+        this.transactions.push(transaction);
+        return true;
+    }
+
+    // Get transaction history
+    getTransactionHistory(): Transaction[] {
+        return [...this.transactions]; // Return a copy to prevent modification
+    }
+
+    // Helper method to generate a transaction ID
+    private generateTransactionId(): string {
+        return `T${String(this.nextTransactionId++).padStart(6, '0')}`;
+    }
+}
+
+// Define the bank class to manage multiple accounts
+class Bank {
+    private accounts: BankAccount[] = [];
+    private nextAccountId: number = 1;
+
+    // Create a new bank account
+    createAccount(
+        ownerName: string, 
+        accountType: AccountType, 
+        initialDeposit: number = 0
+    ): BankAccount {
+        if (initialDeposit < 0) {
+            console.error("Error: Initial deposit cannot be negative");
+            initialDeposit = 0;
+        }
+
+        const accountId = this.generateAccountId();
+        const account = new BankAccount(accountId, ownerName, accountType, initialDeposit);
+        
+        // If initial deposit is positive, record it as a transaction
+        if (initialDeposit > 0) {
+            account.deposit(initialDeposit, "Initial deposit");
+        }
+        
+        this.accounts.push(account);
+        console.log(`Account created: ${accountType} account for ${ownerName} (ID: ${accountId})`);
+        
+        return account;
+    }
+
+    // Find an account by ID
+    findAccountById(accountId: string): BankAccount | undefined {
+        return this.accounts.find(account => account.getAccountId() === accountId);
+    }
+
+    // Find accounts by owner name
+    findAccountsByOwner(ownerName: string): BankAccount[] {
+        return this.accounts.filter(
+            account => account.getOwnerName().toLowerCase().includes(ownerName.toLowerCase())
+        );
+    }
+
+    // Get all accounts
+    getAllAccounts(): BankAccount[] {
+        return [...this.accounts]; // Return a copy to prevent modification
+    }
+
+    // Calculate total funds across all accounts
+    calculateTotalFunds(): number {
+        return this.accounts.reduce((sum, account) => sum + account.getBalance(), 0);
+    }
+
+    // Transfer money between accounts
+    transferFunds(
+        fromAccountId: string, 
+        toAccountId: string, 
+        amount: number,
+        description: string = "Transfer"
+    ): boolean {
+        if (fromAccountId === toAccountId) {
+            console.error("Error: Cannot transfer to the same account");
+            return false;
+        }
+
+        if (amount <= 0) {
+            console.error("Error: Transfer amount must be positive");
+            return false;
+        }
+
+        const fromAccount = this.findAccountById(fromAccountId);
+        const toAccount = this.findAccountById(toAccountId);
+
+        if (!fromAccount) {
+            console.error(`Error: Source account ${fromAccountId} not found`);
+            return false;
+        }
+
+        if (!toAccount) {
+            console.error(`Error: Destination account ${toAccountId} not found`);
+            return false;
+        }
+
+        // Withdraw from source account
+        if (!fromAccount.withdraw(amount, `Transfer to ${toAccountId}: ${description}`)) {
+            return false;
+        }
+
+        // Deposit to destination account
+        toAccount.deposit(amount, `Transfer from ${fromAccountId}: ${description}`);
+        
+        console.log(`Transferred ${amount} from account ${fromAccountId} to ${toAccountId}`);
+        return true;
+    }
+
+    // Generate account summaries
+    generateAccountSummaries(): void {
+        if (this.accounts.length === 0) {
+            console.log("No accounts found");
+            return;
+        }
+
+        console.log("===== Account Summaries =====");
+        this.accounts.forEach(account => {
+            console.log(`Account ID: ${account.getAccountId()}`);
+            console.log(`Owner: ${account.getOwnerName()}`);
+            console.log(`Type: ${account.getAccountType()}`);
+            console.log(`Balance: ${account.getBalance().toFixed(2)}`);
+            console.log("-------------------------");
+        });
+
+        console.log(`Total Funds: ${this.calculateTotalFunds().toFixed(2)}`);
+    }
+
+    // Generate a detailed statement for an account
+    generateAccountStatement(accountId: string): void {
+        const account = this.findAccountById(accountId);
+        if (!account) {
+            console.error(`Error: Account ${accountId} not found`);
+            return;
+        }
+
+        console.log(`\n===== Account Statement: ${accountId} =====`);
+        console.log(`Owner: ${account.getOwnerName()}`);
+        console.log(`Type: ${account.getAccountType()}`);
+        console.log(`Current Balance: ${account.getBalance().toFixed(2)}`);
+        
+        const transactions = account.getTransactionHistory();
+        
+        if (transactions.length === 0) {
+            console.log("\nNo transactions found");
+        } else {
+            console.log("\nTransaction History:");
+            transactions.forEach(transaction => {
+                console.log(
+                    `${transaction.date.toLocaleDateString()} | ` +
+                    `${transaction.type} | ` +
+                    `${transaction.amount.toFixed(2)} | ` +
+                    `${transaction.description}`
+                );
+            });
+        }
+    }
+
+    // Helper method to generate an account ID
+    private generateAccountId(): string {
+        return `A${String(this.nextAccountId++).padStart(6, '0')}`;
+    }
+}
+
+// Demo function to test the banking system
+function runBankingSystemDemo(): void {
+    console.log("===== Banking System Demo =====");
+    
+    const bank = new Bank();
+    
+    // Create accounts
+    const aliceChecking = bank.createAccount("Alice Smith", "Checking", 1000);
+    const aliceSavings = bank.createAccount("Alice Smith", "Savings", 5000);
+    const bobChecking = bank.createAccount("Bob Jones", "Checking", 2500);
+    
+    // Try an invalid initial deposit
+    const invalidAccount = bank.createAccount("Invalid Account", "Checking", -100);
+    
+    // Perform transactions
+    aliceChecking.deposit(500, "Paycheck deposit");
+    aliceChecking.withdraw(200, "ATM withdrawal");
+    
+    bobChecking.deposit(1000, "Bonus");
+    bobChecking.withdraw(300, "Rent payment");
+    
+    // Try invalid transactions
+    aliceChecking.withdraw(10000); // Insufficient funds
+    bobChecking.deposit(-50);      // Negative amount
+    
+    // Transfer funds
+    bank.transferFunds(
+        aliceSavings.getAccountId(),
+        aliceChecking.getAccountId(),
+        1000,
+        "Monthly transfer"
+    );
+    
+    // Try invalid transfers
+    bank.transferFunds(aliceChecking.getAccountId(), "NonExistentAccount", 100);
+    bank.transferFunds(aliceChecking.getAccountId(), aliceChecking.getAccountId(), 100);
+    
+    // Generate account summaries
+    bank.generateAccountSummaries();
+    
+    // Find accounts by owner
+    console.log("\n===== Find Accounts by Owner =====");
+    const aliceAccounts = bank.findAccountsByOwner("Alice");
+    console.log(`Found ${aliceAccounts.length} accounts for Alice:`);
+    aliceAccounts.forEach(account => {
+        console.log(`- ${account.getAccountId()} (${account.getAccountType()}): ${account.getBalance().toFixed(2)}`);
+    });
+    
+    // Generate account statements
+    bank.generateAccountStatement(aliceChecking.getAccountId());
+    bank.generateAccountStatement(bobChecking.getAccountId());
+}
+
+// Run the banking system demo
+runBankingSystemDemo();
+```
+
+---
+
+These exercises provide a comprehensive way to apply the TypeScript concepts you've learned in Week 1. Each exercise incorporates multiple aspects including type definitions, functions, classes, error handling, and more. Feel free to modify and extend these exercises to further practice your skills.
+
+When completing the exercises, remember to:
+1. Start by understanding the requirements
+2. Plan your approach before coding
+3. Make use of TypeScript's type system
+4. Test your code with various inputs
+5. Handle errors and edge cases properly
+
+The solutions provided are thorough implementations to demonstrate how the exercises could be completed, but there are many valid ways to solve these problems. Your own solutions might differ in structure or implementation details while still meeting all the requirements.
+
+---
 
 ## Analogies to Help Understand TypeScript Concepts
 
